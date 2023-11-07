@@ -1,5 +1,4 @@
-generate:
-	mocks
+generate: mocks
 
 mocks:
 	go get go.uber.org/mock/mockgen/model
