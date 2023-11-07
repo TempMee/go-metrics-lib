@@ -1,0 +1,78 @@
+package main
+
+import (
+	MetricsLib "github.com/tempmee/go-metrics-lib"
+	"github.com/tempmee/go-metrics-lib/clients/datadog"
+	"log"
+	"reflect"
+	"strings"
+)
+
+type Result string
+
+const (
+	ResultSuccess Result = "success"
+	ResultError   Result = "error"
+)
+
+type Labels struct {
+	Name    string
+	Service string
+	Result  Result
+}
+
+func labelsToMapString(labels any) map[string]string {
+	values := reflect.ValueOf(labels)
+	types := values.Type()
+	tags := make(map[string]string)
+	for i := 0; i < values.NumField(); i++ {
+		tags[strings.ToLower(types.Field(i).Name)] = values.Field(i).String()
+	}
+
+	return tags
+}
+
+func main() {
+	datadogClient := datadog.NewDatadogClient(datadog.DataDogConfig{
+		DD_AGENT_HOST: "localhost",
+		DD_AGENT_PORT: 8125,
+	})
+	metrics := MetricsLib.NewMetrics(
+		datadogClient,
+		1,
+	)
+	err := metrics.HistogramMetric("graphql.resolver.millisecond", 100,
+		map[string]string{
+			"resolver": "resolver",
+			"service":  "graphql",
+			"result":   "success",
+		},
+	)
+
+	if err != nil {
+		log.Println("BORKED!")
+		panic(err)
+	}
+
+	err = metrics.SummaryMetric("graphql.resolver.millisecond", 100, map[string]string{
+		"resolver": "resolver",
+		"service":  "graphql",
+		"result":   "success",
+	})
+
+	if err != nil {
+		log.Println("BORKED!")
+
+	}
+
+	err = metrics.ResolverMetric("graphql.resolver.millisecond", 100, MetricsLib.ResolverMetricLabels{
+		Resolver: "resolver",
+		Result:   MetricsLib.Success,
+	})
+
+	if err != nil {
+		log.Println("BORKED!")
+		panic(err)
+	}
+
+}
