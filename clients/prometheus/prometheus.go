@@ -104,7 +104,7 @@ func (p *PrometheusClient) CreateSummaryVec(name string, help string, labelNames
 func (p *PrometheusClient) Histogram(name string, value float64, labels map[string]string, rate float64) error {
 	labelNames := make([]string, 0, len(labels))
 	labelValues := make([]string, 0, len(labels))
-	for k, _ := range labels {
+	for k := range labels {
 		labelNames = append(labelNames, k)
 	}
 
@@ -123,7 +123,7 @@ func (p *PrometheusClient) Histogram(name string, value float64, labels map[stri
 func (p *PrometheusClient) Count(name string, labels map[string]string, rate float64) error {
 	labelNames := make([]string, 0, len(labels))
 	labelValues := make([]string, 0, len(labels))
-	for k, _ := range labels {
+	for k := range labels {
 		labelNames = append(labelNames, k)
 	}
 	if _, ok := p.CounterVecs[name]; !ok {
@@ -141,7 +141,7 @@ func (p *PrometheusClient) Count(name string, labels map[string]string, rate flo
 func (p *PrometheusClient) Gauge(name string, value float64, labels map[string]string, rate float64) error {
 	labelNames := make([]string, 0, len(labels))
 	labelValues := make([]string, 0, len(labels))
-	for k, _ := range labels {
+	for k := range labels {
 		labelNames = append(labelNames, k)
 	}
 	if _, ok := p.GaugeVecs[name]; !ok {
@@ -159,7 +159,7 @@ func (p *PrometheusClient) Gauge(name string, value float64, labels map[string]s
 func (p *PrometheusClient) Summary(name string, value float64, labels map[string]string, rate float64) error {
 	labelNames := make([]string, 0, len(labels))
 	labelValues := make([]string, 0, len(labels))
-	for k, _ := range labels {
+	for k := range labels {
 		labelNames = append(labelNames, k)
 	}
 	if _, ok := p.SummaryVecs[name]; !ok {
