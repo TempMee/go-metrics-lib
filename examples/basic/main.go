@@ -4,8 +4,6 @@ import (
 	MetricsLib "github.com/tempmee/go-metrics-lib"
 	"github.com/tempmee/go-metrics-lib/clients/datadog"
 	"log"
-	"reflect"
-	"strings"
 )
 
 type Result string
@@ -19,17 +17,6 @@ type Labels struct {
 	Name    string
 	Service string
 	Result  Result
-}
-
-func labelsToMapString(labels any) map[string]string {
-	values := reflect.ValueOf(labels)
-	types := values.Type()
-	tags := make(map[string]string)
-	for i := 0; i < values.NumField(); i++ {
-		tags[strings.ToLower(types.Field(i).Name)] = values.Field(i).String()
-	}
-
-	return tags
 }
 
 func main() {
