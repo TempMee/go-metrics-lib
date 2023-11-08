@@ -20,7 +20,7 @@ func NewPrometheusClient() *PrometheusClient {
 
 func (p *PrometheusClient) ServerHandler() {
 	http.Handle("/metrics", promhttp.Handler())
-	http.ListenAndServe(":2112", nil)
+	_ = http.ListenAndServe(":2112", nil)
 }
 
 func (p *PrometheusClient) CreateHistogramVec(name string, help string, labelNames []string, buckets []float64) error {
