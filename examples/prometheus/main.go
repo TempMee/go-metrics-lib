@@ -51,7 +51,7 @@ func main() {
 		1,
 	)
 
-	prometheusClient.CreateHistogramVec("graphql_resolver_millisecond2", "graphql resolver millisecond", []string{"resolver", "service", "result"}, []float64{
+	prometheusClient.CreateHistogramVec("graphql_resolver_millisecond4", "graphql resolver millisecond", []string{"resolver", "service", "result"}, []float64{
 		// create buckets 10000 split into 10 buckets
 		1000,
 		2000,
@@ -68,7 +68,7 @@ func main() {
 	go func() {
 		// run loop for every every 1-3 seconds
 		for {
-			err := metrics.HistogramMetric("graphql_resolver_millisecond2", float64(rand.Intn(10000)),
+			err := metrics.HistogramMetric("graphql_resolver_millisecond4", float64(rand.Intn(10000)),
 				map[string]string{
 					"resolver": "resolver",
 					"service":  "graphql",
