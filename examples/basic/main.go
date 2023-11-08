@@ -65,7 +65,7 @@ func main() {
 
 	}
 
-	err = metrics.ResolverMetric("graphql.resolver.millisecond", 100, MetricsLib.ResolverMetricLabels{
+	err = metrics.ResolverMetric(100, MetricsLib.ResolverMetricLabels{
 		Resolver: "resolver",
 		Result:   MetricsLib.Success,
 	})
