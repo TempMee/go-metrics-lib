@@ -83,12 +83,16 @@
       "id": 3,
       "options": {
         "displayLabels": [
-          "name"
+          "name",
+          "percent"
         ],
         "legend": {
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": true
+          "showLegend": true,
+          "values": [
+            "percent"
+          ]
         },
         "pieType": "pie",
         "reduceOptions": {
@@ -201,7 +205,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum by(le) (rate(graphql_resolver_millisecond4_bucket{service=\"graphql\", result=\"success\"}[$__rate_interval]))",
+          "expr": "sum by(le) (rate(graphql_resolver_millisecond4_bucket{service=\"graphql\"}[$__rate_interval]))",
           "format": "heatmap",
           "instant": false,
           "legendFormat": "{{le}}",
@@ -269,7 +273,7 @@
             "uid": "prometheus"
           },
           "editorMode": "code",
-          "expr": "sum by(le) (rate(graphql_resolver_millisecond4_bucket{service=\"graphql\", result=\"success\"}[$__rate_interval]))",
+          "expr": "sum by(le) (increase(graphql_resolver_millisecond4_bucket{service=\"graphql\"}[$__range]))",
           "format": "heatmap",
           "instant": false,
           "legendFormat": "{{le}}",
@@ -383,13 +387,13 @@
     "list": []
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "histogram buckets",
   "uid": "e5ce1b28-a7ee-4565-8954-385432d4e04f",
-  "version": 6,
+  "version": 7,
   "weekStart": ""
 }
