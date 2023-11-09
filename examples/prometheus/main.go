@@ -68,6 +68,29 @@ func main() {
 	go func() {
 		// run loop for every every 1-3 seconds
 		for {
+			successFailure := rand.Intn(2)
+			if successFailure == 0 {
+				err := metrics.HistogramMetric("graphql_resolver_millisecond4", float64(rand.Intn(10000)),
+					map[string]string{
+						"resolver": "resolver",
+						"service":  "graphql",
+						"result":   "error",
+					},
+				)
+
+				if err != nil {
+					log.Println("BORKED!")
+					panic(err)
+				}
+
+				_ = metrics.CallMetric(float64(rand.Intn(10000)), MetricsLib.CallMetricLabels{
+					Service:  "graphql",
+					Function: "resolver",
+					Result:   MetricsLib.Error,
+				})
+				time.Sleep(time.Duration(float64(rand.Intn(5))) * time.Second)
+				continue
+			}
 			err := metrics.HistogramMetric("graphql_resolver_millisecond4", float64(rand.Intn(10000)),
 				map[string]string{
 					"resolver": "resolver",
