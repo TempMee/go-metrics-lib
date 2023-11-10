@@ -24,7 +24,7 @@ func measurementHandler(client Client, config HttpMiddlewareMetricConfig, rate f
 
 		defer func() {
 			elasped := time.Since(startTime).Milliseconds()
-			err := client.Histogram("http.request_duration_histogram_milliseconds", float64(elasped),
+			err := client.Histogram("http_request_duration_histogram_milliseconds", float64(elasped),
 				map[string]string{
 					"service": config.Service,
 					"method":  r.Method,
