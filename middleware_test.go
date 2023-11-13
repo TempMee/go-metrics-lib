@@ -27,7 +27,7 @@ func TestMetrics_HttpMiddleware(t *testing.T) {
 
 		client.EXPECT().Histogram(gomock.Any(), gomock.Any(), gomock.Any(), gomock.Any()).DoAndReturn(
 			func(metric string, value float64, labels map[string]string, rate float64) error {
-				if metric != "http.request_duration_histogram_milliseconds" {
+				if metric != "http_request_duration_histogram_milliseconds" {
 					t.Errorf("metric name is not http_request_duration_seconds")
 				}
 				if value == float64(0) {
