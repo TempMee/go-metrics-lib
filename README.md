@@ -20,18 +20,22 @@ Some clients will provide their own metrics, such as the prometheus client. Addi
 support more details such as buckets. In the case of histograms, Buckets need to be set initially to keep consistency in
 metrics.
 
-setup metric:
+How to setup metric:
 ```go
-err := datadogClient.CreateHistogram("graphql.resolver.millisecond", []float64{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}, map[string]string{
+datadogClient.CreateHistogram("graphql.resolver.millisecond", []float64{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}, map[string]string{
     "resolver": "resolver",
     "service":  "graphql",
     "result":   "success",
 }, 1)
 ```
 
-use metric:
+How to use metric:
 ```go
-err = metrics.HistogramMetric("graphql.resolver.millisecond", 100,
+metrics := MetricsLib.NewMetrics(
+    datadogClient,
+    1,
+)
+err := metrics.HistogramMetric("graphql.resolver.millisecond", 100, // if metric not created, will have empty buckets (le:+Inf) 
     map[string]string{
         "resolver": "resolver",
         "service":  "graphql",
@@ -40,7 +44,10 @@ err = metrics.HistogramMetric("graphql.resolver.millisecond", 100,
 )
 ```
 
-Reference to metrics is done through the metric name. 
+Reference to metrics is done through the metric name, thus metrics cannot be overwritten. You may add on more labels 
+and overwrite label values, however labels initially set cannot be removed during runtime.
+
+## Examples
 
 See examples in examples folder.
 
@@ -125,3 +132,15 @@ func main() {
 
 
 ```
+
+# References for Metrics
+https://prometheus.io/docs/concepts/metric_types/
+
+## Best Practices (applies to datadog as well)
+
+https://prometheus.io/docs/practices/naming/
+https://prometheus.io/docs/practices/consoles/
+https://prometheus.io/docs/practices/instrumentation/
+https://prometheus.io/docs/practices/histograms/
+https://prometheus.io/docs/practices/alerting/
+https://prometheus.io/docs/practices/rules/
