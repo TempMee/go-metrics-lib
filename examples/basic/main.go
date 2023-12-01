@@ -35,7 +35,7 @@ func main() {
 		1,
 	)
 
-	err = metrics.HistogramMetric("graphql.resolver.millisecond", 100,
+	err := metrics.HistogramMetric("graphql.resolver.millisecond", 100,
 		map[string]string{
 			"resolver": "resolver",
 			"service":  "graphql",
