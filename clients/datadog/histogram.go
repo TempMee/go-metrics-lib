@@ -21,8 +21,8 @@ func NewHistogram(metricName string, buckets []float64, labels map[string]string
 	}
 }
 
+// remove excess 0s from float
 func trimFloat(s string) string {
-	// remove 0s from float
 	s = strings.TrimRight(s, "0")
 	s = strings.TrimRight(s, ".")
 	return s
@@ -38,7 +38,6 @@ func (h *Histogram) GenerateMetric(value float64, labels map[string]string, rate
 	le := ""
 	for _, bucket := range h.Buckets {
 		if value <= bucket {
-			// remove 0s from float
 			le = trimFloat(fmt.Sprintf("%f", bucket))
 			break
 		}
