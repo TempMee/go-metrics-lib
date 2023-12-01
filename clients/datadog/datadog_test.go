@@ -15,11 +15,11 @@ func TestDataDogClient_CreateHistogram(t *testing.T) {
 			Histograms: map[string]*Histogram{},
 		}
 
-		err := datadogClient.CreateHistogram("test", []float64{10, 20, 30}, map[string]string{"test": "test"}, 1.0)
-		a.NoError(err)
+		datadogClient.CreateHistogram("test", []float64{10, 20, 30}, map[string]string{"test": "test"}, 1.0)
+
 		histogram, err := datadogClient.Histograms["test"].GenerateMetric(1, map[string]string{"test": "test"}, 1.0)
 		a.NoError(err)
-		a.Equal(histogram.labels["le"], "10")
+		a.Equal(histogram.Labels["le"], "10")
 	})
 
 	t.Run("Should use latest tags", func(t *testing.T) {
@@ -30,13 +30,12 @@ func TestDataDogClient_CreateHistogram(t *testing.T) {
 			Histograms: map[string]*Histogram{},
 		}
 
-		err := datadogClient.CreateHistogram("test", []float64{10, 20, 30}, map[string]string{"test": "test"}, 1.0)
-		a.NoError(err)
+		datadogClient.CreateHistogram("test", []float64{10, 20, 30}, map[string]string{"test": "test"}, 1.0)
 
 		histogram, err := datadogClient.Histograms["test"].GenerateMetric(1, map[string]string{"test": "test2"}, 1.0)
 		a.NoError(err)
-		a.Equal(histogram.labels["le"], "10")
-		a.Equal(histogram.labels["test"], "test2")
+		a.Equal(histogram.Labels["le"], "10")
+		a.Equal(histogram.Labels["test"], "test2")
 	})
 
 }

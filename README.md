@@ -14,6 +14,34 @@ library currently supports these standard metrics:
 | call_duration_histogram_milliseconds             | service= service name<br/>result= success \|fail<br/>function= function name                                                                         | Looking at the duration of a call for a function (not for every function, used for things we want to watch)                                 | |
 
 
+### Usage of metrics specific to clients
+
+Some clients will provide their own metrics, such as the prometheus client. Additionally, metrics like Histograms 
+support more details such as buckets. In the case of histograms, Buckets need to be set initially to keep consistency in
+metrics.
+
+setup metric:
+```go
+err := datadogClient.CreateHistogram("graphql.resolver.millisecond", []float64{10, 20, 30, 40, 50, 60, 70, 80, 90, 100}, map[string]string{
+    "resolver": "resolver",
+    "service":  "graphql",
+    "result":   "success",
+}, 1)
+```
+
+use metric:
+```go
+err = metrics.HistogramMetric("graphql.resolver.millisecond", 100,
+    map[string]string{
+        "resolver": "resolver",
+        "service":  "graphql",
+        "result":   "success",
+    },
+)
+```
+
+Reference to metrics is done through the metric name. 
+
 See examples in examples folder.
 
 Example Usage:

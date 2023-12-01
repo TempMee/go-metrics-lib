@@ -8,38 +8,50 @@ import (
 type Histogram struct {
 	MetricName string
 	Buckets    []float64
-	labels     map[string]string
-	rate       float64
+	Labels     map[string]string
+	Rate       float64
 }
 
 func NewHistogram(metricName string, buckets []float64, labels map[string]string, rate float64) *Histogram {
 	return &Histogram{
 		MetricName: metricName,
 		Buckets:    buckets,
-		labels:     labels,
-		rate:       rate,
+		Labels:     labels,
+		Rate:       rate,
 	}
 }
 
+func trimFloat(s string) string {
+	// remove 0s from float
+	s = strings.TrimRight(s, "0")
+	s = strings.TrimRight(s, ".")
+	return s
+}
+
+/**
+ * GenerateMetric generates a metric based on the value and labels
+ *
+ * buckets are filled based on the value such that 5 fills 10, 25 fills 30, 50 fills +Inf
+ */
 func (h *Histogram) GenerateMetric(value float64, labels map[string]string, rate float64) (Histogram, error) {
 	// set le label related to value in buckets
 	le := ""
 	for _, bucket := range h.Buckets {
 		if value <= bucket {
 			// remove 0s from float
-			le = strings.TrimRight(fmt.Sprintf("%f", bucket), "0")
-			le = strings.TrimRight(le, ".")
+			le = trimFloat(fmt.Sprintf("%f", bucket))
 			break
 		}
 	}
+
 	if le == "" {
 		le = "+Inf"
 	}
 
 	// set labels
-	h.labels = labels
-	h.labels["le"] = le
-	h.rate = rate
+	h.Labels = labels
+	h.Labels["le"] = le
+	h.Rate = rate
 
 	return *h, nil
 

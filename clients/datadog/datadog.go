@@ -35,17 +35,14 @@ func NewDatadogClient(datadogConfig DataDogConfig) *DataDogClient {
  * CreateHistogram creates a new histogram metric
  * Use this if you need to set buckets
  */
-func (d *DataDogClient) CreateHistogram(metric string, buckets []float64, labels map[string]string, rate float64) error {
-	if d.Histograms == nil {
-		d.Histograms = make(map[string]*Histogram)
-	}
+func (d *DataDogClient) CreateHistogram(metric string, buckets []float64, labels map[string]string, rate float64) {
 	if _, ok := d.Histograms[metric]; ok {
-		return nil
+		return
 	}
 
 	histogram := NewHistogram(metric, buckets, labels, rate)
 	d.Histograms[metric] = histogram
-	return nil
+
 }
 
 /**
@@ -54,17 +51,14 @@ func (d *DataDogClient) CreateHistogram(metric string, buckets []float64, labels
  */
 func (d *DataDogClient) Histogram(metric string, value float64, labels map[string]string, rate float64) error {
 	if _, ok := d.Histograms[metric]; !ok {
-		err := d.CreateHistogram(metric, []float64{0.0, 1.0}, labels, rate)
-		if err != nil {
-			return err
-		}
+		d.CreateHistogram(metric, []float64{0.0, 1.0}, labels, rate)
 	}
 
-	histogram, err := d.Histograms[metric].GenerateMetric(value, d.Histograms[metric].labels, rate)
+	histogram, err := d.Histograms[metric].GenerateMetric(value, d.Histograms[metric].Labels, rate)
 	if err != nil {
 		return err
 	}
-	tags := labelsToStringArray(histogram.labels)
+	tags := labelsToStringArray(histogram.Labels)
 	err = d.Client.Histogram(histogram.MetricName, value, tags, rate)
 	if err != nil {
 		return err
