@@ -14,7 +14,8 @@ func TestDataDogClient_CreateHistogram(t *testing.T) {
 		Histograms: map[string]*Histogram{},
 	}
 
-	_ = datadogClient.CreateHistogram("test", []float64{10, 20, 30}, map[string]string{"test": "test"}, 1.0)
+	err := datadogClient.CreateHistogram("test", []float64{10, 20, 30}, map[string]string{"test": "test"}, 1.0)
+	a.NoError(err)
 	histogram, err := datadogClient.Histograms["test"].GenerateMetric(1, map[string]string{"test": "test"}, 1.0)
 	a.NoError(err)
 	a.Equal(histogram.labels["le"], "10")
