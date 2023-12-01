@@ -31,6 +31,10 @@ func NewDatadogClient(datadogConfig DataDogConfig) *DataDogClient {
 	}
 }
 
+/**
+ * CreateHistogram creates a new histogram metric
+ * Use this if you need to set buckets
+ */
 func (d *DataDogClient) CreateHistogram(metric string, buckets []float64, labels map[string]string, rate float64) error {
 	if d.Histograms == nil {
 		d.Histograms = make(map[string]*Histogram)
@@ -44,6 +48,10 @@ func (d *DataDogClient) CreateHistogram(metric string, buckets []float64, labels
 	return nil
 }
 
+/**
+ * Histogram pushes a value to a histogram metric
+ * If the metric does not exist, it will be created with default buckets
+ */
 func (d *DataDogClient) Histogram(metric string, value float64, labels map[string]string, rate float64) error {
 	if _, ok := d.Histograms[metric]; !ok {
 		err := d.CreateHistogram(metric, []float64{0.0, 1.0}, labels, rate)
