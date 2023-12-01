@@ -46,7 +46,10 @@ func (d *DataDogClient) CreateHistogram(metric string, buckets []float64, labels
 
 func (d *DataDogClient) Histogram(metric string, value float64, labels map[string]string, rate float64) error {
 	if _, ok := d.Histograms[metric]; !ok {
-		_ = d.CreateHistogram(metric, []float64{0.0, 1.0}, labels, rate)
+		err := d.CreateHistogram(metric, []float64{0.0, 1.0}, labels, rate)
+		if err != nil {
+			return err
+		}
 	}
 
 	histogram, err := d.Histograms[metric].GenerateMetric(value, d.Histograms[metric].labels, rate)
