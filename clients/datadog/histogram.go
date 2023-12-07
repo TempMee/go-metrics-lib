@@ -21,18 +21,15 @@ func NewHistogram(metricName string, buckets []float64, labels map[string]string
 	}
 }
 
-// remove excess 0s from float
+// trimFloat remove excess 0s from float
 func trimFloat(s string) string {
 	s = strings.TrimRight(s, "0")
 	s = strings.TrimRight(s, ".")
 	return s
 }
 
-/**
- * GenerateMetric generates a metric based on the value and labels
- *
- * buckets are filled based on the value such that 5 fills 10, 25 fills 30, 50 fills +Inf
- */
+// GenerateMetric generates a metric based on the value and labels
+// buckets are filled based on the value such that 5 fills 10, 25 fills 30, 50 fills +Inf
 func (h *Histogram) GenerateMetric(value float64, labels map[string]string, rate float64) (Histogram, error) {
 	// set le label related to value in buckets
 	le := ""
