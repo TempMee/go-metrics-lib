@@ -2,6 +2,7 @@ package metrics_lib
 
 import (
 	"net/http"
+	"time"
 )
 
 type MetricsImpl interface {
@@ -50,6 +51,18 @@ func (m *Metrics) HttpMiddlewareMetric(config HttpMiddlewareMetricConfig) func(h
 
 func (m *Metrics) ApiMetric(value float64, labels ApiMetricLabels) error {
 	return ApiMetric(m.client, value, labels)
+}
+
+func (m *Metrics) ApiMetricDuration(startTime time.Time, labels ApiMetricLabels, err error) error {
+	durationInMilliseconds := float64(time.Since(startTime).Nanoseconds()) / 1000000
+
+	if err != nil {
+		labels.Result = Error
+	} else {
+		labels.Result = Success
+	}
+
+	return ApiMetric(m.client, durationInMilliseconds, labels)
 }
 
 func (m *Metrics) DatabaseMetric(value float64, labels DatabaseMetricLabels) error {
