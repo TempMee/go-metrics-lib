@@ -114,5 +114,14 @@ func main() {
 		}
 	}()
 
+	startTime := time.Now()
+	// code to be measured
+	differenceInMilliseconds := time.Now().Sub(startTime).Milliseconds()
+	metrics.ApiMetric(float64(differenceInMilliseconds), MetricsLib.ApiMetricLabels{
+		Service: "service",
+		Vendor:  "vendor",
+		Call:    "call",
+		Result:  MetricsLib.Success,
+	})
 	wg.Wait()
 }

@@ -35,6 +35,12 @@ func main() {
 		1,
 	)
 
+	metrics.CountMetric("graphql.resolver.count", map[string]string{
+		"resolver": "resolver",
+		"service":  "graphql",
+		"result":   "success",
+	})
+
 	err := metrics.HistogramMetric("graphql.resolver.millisecond", 100,
 		map[string]string{
 			"resolver": "resolver",
@@ -68,5 +74,12 @@ func main() {
 		log.Println("BORKED!")
 		panic(err)
 	}
+
+	metrics.ApiMetric(100, MetricsLib.ApiMetricLabels{
+		Service: "service",
+		Vendor:  "vendor",
+		Call:    "call",
+		Result:  MetricsLib.Success,
+	})
 
 }
