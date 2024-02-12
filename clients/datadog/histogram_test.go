@@ -58,4 +58,14 @@ func TestHistogram_GenerateMetric(t *testing.T) {
 		a.Equal(val.Labels["le"], "+Inf")
 	})
 
+	t.Run("Should generate metric with different labels", func(t *testing.T) {
+		a := assert.New(t)
+
+		metric := datadog.NewHistogram("test", []float64{10, 20, 30}, map[string]string{"test": "test"}, 1.0)
+		val, err := metric.GenerateMetric(1, map[string]string{"test": "test2"}, 1.0)
+
+		a.NoError(err)
+		a.Equal(val.Labels["test"], "test2")
+	})
+
 }
