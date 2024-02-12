@@ -53,6 +53,10 @@ func (d *DataDogClient) Histogram(metric string, value float64, labels map[strin
 	if err != nil {
 		return err
 	}
+	// merge labels
+	for k, v := range labels {
+		histogram.Labels[k] = v
+	}
 	tags := labelsToStringArray(histogram.Labels)
 	err = d.Client.Histogram(histogram.MetricName, value, tags, rate)
 	if err != nil {

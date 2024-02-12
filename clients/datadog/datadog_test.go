@@ -30,6 +30,18 @@ func TestDataDogClient_CreateHistogram(t *testing.T) {
 		a.NoError(err)
 		a.Equal(histogram.Labels["le"], "10")
 		a.Equal(histogram.Labels["test"], "test2")
+
+		client := NewDatadogClient(DataDogConfig{
+			DD_AGENT_HOST: "localhost",
+			DD_AGENT_PORT: 8125,
+		})
+
+		client.CreateHistogram("test", []float64{10, 20, 30}, map[string]string{"test": "test"}, 1.0)
+
+		err = client.Histogram("test", 1, map[string]string{"test": "test2"}, 1.0)
+
+		a.NoError(err)
+
 	})
 
 }
