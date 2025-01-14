@@ -13,6 +13,7 @@ The **Go Metrics Library** simplifies the implementation of metrics and provides
 | **api\_request\_duration\_histogram\_milliseconds**         | `service` (current service), <br/>`vendor` (internal/external), <br/>`call` (query/function name), <br/>`result` (success/fail)                      | Tracks communication duration between services/vendors, source, destination, and result.      |
 | **database\_query\_duration\_histogram\_milliseconds**      | `service` (service name), <br/>`result` (success/fail), <br/>`table` (table name), <br/>`method` (insert/delete/find), <br/>`database` (mongodb/postgres) | Measures query durations by service, database, and operation type.                            |
 | **call\_duration\_histogram\_milliseconds**                 | `service` (service name), <br/>`result` (success/fail), <br/>`function` (function name)                                                         | Monitors the duration of specific function calls (used selectively for targeted observation). |
+| **event\_process\_histogram\_duration\_milliseconds**		  | `queueName` (queue name), <br/>`result` (success/fail)																							| Monitors the duration of processor calls 												| 
 
 ---
 

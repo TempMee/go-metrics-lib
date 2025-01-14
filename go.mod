@@ -1,12 +1,15 @@
 module github.com/TempMee/go-metrics-lib
 
-go 1.21
+go 1.22
+
+toolchain go1.23.4
 
 require (
 	github.com/DataDog/datadog-go/v5 v5.3.0
 	github.com/golang/mock v1.6.0
 	github.com/prometheus/client_golang v1.17.0
-	github.com/stretchr/testify v1.8.1
+	github.com/stretchr/testify v1.9.0
+	go.uber.org/mock v0.5.0
 )
 
 require (
@@ -21,9 +24,9 @@ require (
 	github.com/prometheus/client_model v0.4.1-0.20230718164431-9a2bf3000d16 // indirect
 	github.com/prometheus/common v0.44.0 // indirect
 	github.com/prometheus/procfs v0.11.1 // indirect
-	golang.org/x/mod v0.11.0 // indirect
-	golang.org/x/sys v0.11.0 // indirect
-	golang.org/x/tools v0.2.0 // indirect
+	golang.org/x/mod v0.18.0 // indirect
+	golang.org/x/sys v0.21.0 // indirect
+	golang.org/x/tools v0.22.0 // indirect
 	google.golang.org/protobuf v1.31.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
