@@ -1,18 +1,21 @@
 # Go Metrics Library
 
-The **Go Metrics Library** simplifies the implementation of metrics and provides a standardized approach to metric usage in Go applications. This library supports a range of metrics, offering flexibility and consistency in tracking application performance and behavior.
+The **Go Metrics Library** simplifies the implementation of metrics and provides a standardized approach to metric usage
+in Go applications. This library supports a range of metrics, offering flexibility and consistency in tracking
+application performance and behavior.
 
 ---
 
 ## **Supported Standard Metrics**
 
-| Metric                                                      | Labels                                                                                                                                | Description                                                                                   |
-| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| **resolver\_request\_duration\_histogram\_milliseconds**    | `resolver` (function name),<br/> `result` (success/fail), <br/>`service` (service name), <br/>`protocol` (http/grpc/graphql)                         | Tracks the success/failure, duration, and duration distribution of resolver requests.         |
-| **http\_request\_duration\_histogram\_milliseconds**        | `result` (success/fail), <br/>`service` (service name), <br/>`method` (HTTP method: POST, GET, PATCH, etc.)                                     | Captures metrics for all HTTP requests to the service. (Datadog provides this by default.)    |
-| **api\_request\_duration\_histogram\_milliseconds**         | `service` (current service), <br/>`vendor` (internal/external), <br/>`call` (query/function name), <br/>`result` (success/fail)                      | Tracks communication duration between services/vendors, source, destination, and result.      |
-| **database\_query\_duration\_histogram\_milliseconds**      | `service` (service name), <br/>`result` (success/fail), <br/>`table` (table name), <br/>`method` (insert/delete/find), <br/>`database` (mongodb/postgres) | Measures query durations by service, database, and operation type.                            |
-| **call\_duration\_histogram\_milliseconds**                 | `service` (service name), <br/>`result` (success/fail), <br/>`function` (function name)                                                         | Monitors the duration of specific function calls (used selectively for targeted observation). |
+| Metric                                                   | Labels                                                                                                                                                                                               | Description                                                                                 |
+|----------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+| **resolver\_request\_duration\_histogram\_milliseconds** | `resolver` (function name),<br/> `result` (success/fail), <br/>`service` (service name), <br/>`protocol` (http/grpc/graphql) <br/> `env`: production\|staging\|development                           | Tracks the success/failure, duration, and duration distribution of resolver requests.       |
+| **http\_request\_duration\_histogram\_milliseconds**     | `result` (success/fail), <br/>`service` (service name), <br/>`method` (HTTP method: POST, GET, PATCH, etc.) <br/> env: production\|staging\|development                                              | Captures metrics for all HTTP requests to the service. (Datadog provides this by default.)  |
+| **api\_request\_duration\_histogram\_milliseconds**      | `service` (current service), <br/>`vendor` (internal/external), <br/>`call` (query/function name), <br/>`result` (success/fail) <br/> `env`: production\|staging\|development                        | Tracks communication duration between services/vendors, source, destination, and result.    |
+| **database\_query\_duration\_histogram\_milliseconds**   | `service` (service name), <br/>`result` (success/fail), <br/>`table` (table name), <br/>`method` (insert/delete/find), <br/>`database` (mongodb/postgres) <br/> `env`: production\|staging\|development | Measures query durations by service, database, and operation type.                          |
+| **call\_duration\_histogram\_milliseconds**              | `service` (service name), <br/>`result` (success/fail), <br/>`function` (function name) <br/> `env`: production\|staging\|development                                                                | Monitors the duration of specific function calls (used selectively for targeted observation). |
+| **event\_process\_histogram\_duration\_milliseconds**    | `service` (service name), <br/>`event` (event name), <br/>`result` (success/fail) <br/> `env`: production\|staging\|development                                                                     | Tracks the duration of event processing by service, event, and result.                        |
 
 ---
 
@@ -32,12 +35,12 @@ The library includes a Datadog client for integrating with Datadog’s monitorin
 
 ```go
 import (
-    "github.com/TempMee/go-metrics-lib/clients/datadog"
+"github.com/TempMee/go-metrics-lib/clients/datadog"
 )
 
 config := datadog.DataDogConfig{
-    DD_AGENT_HOST: "localhost",
     DD_AGENT_PORT: 8125,
+    DD_AGENT_HOST: "localhost",
 }
 
 datadogClient := datadog.NewDatadogClient(config)
@@ -63,7 +66,7 @@ A Prometheus client is also included for users leveraging Prometheus for metrics
 
 ```go
 import (
-    "github.com/TempMee/go-metrics-lib/clients/prometheus"
+"github.com/TempMee/go-metrics-lib/clients/prometheus"
 )
 
 prometheusClient := prometheus.NewPrometheusClient()
@@ -114,61 +117,62 @@ You can track HTTP request durations and counts for both success and error scena
 
 ```go
 import (
-	"net/http"
-	"time"
-	"github.com/TempMee/go-metrics-lib"
-	"github.com/TempMee/go-metrics-lib/clients/datadog"
+    "net/http"
+    "time"
+    "github.com/TempMee/go-metrics-lib"
+    "github.com/TempMee/go-metrics-lib/clients/datadog"
 )
 
-func MetricsMiddleware(metrics metrics_lib.MetricsImpl, serviceName string) func(http.Handler) http.Handler {
-	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			start := time.Now()
+func MetricsMiddleware(metrics metrics_lib.MetricsImpl, serviceName string) func (http.Handler) http.Handler {
+    return func (next http.Handler) http.Handler {
+        return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request) {
+            start := time.Now()
+            
+            defer func() {
+                duration := float64(time.Since(start).Milliseconds())
+                result := "success"
+                if w.WriteHeader != http.StatusOK {
+                    result = "error"
+                }
 
-			defer func() {
-				duration := float64(time.Since(start).Milliseconds())
-				result := "success"
-				if w.WriteHeader != http.StatusOK {
-					result = "error"
-				}
+                metrics.HistogramMetric("http_request_duration_histogram_milliseconds", duration, map[string]string{
+                    "service": serviceName,
+                    "method":  r.Method,
+                    "result":  result,
+                })
+            }()
 
-				metrics.HistogramMetric("http_request_duration_histogram_milliseconds", duration, map[string]string{
-					"service": serviceName,
-					"method":  r.Method,
-					"result":  result,
-				})
-			}()
-
-			next.ServeHTTP(w, r)
-		})
-	}
+            next.ServeHTTP(w, r)
+        })
+    }
 }
 
 func main() {
-	// Configure Datadog client
-	config := datadog.DataDogConfig{
-		DD_AGENT_HOST: "localhost",
-		DD_AGENT_PORT: 8125,
-	}
-	datadogClient := datadog.NewDatadogClient(config)
-	metrics := metrics_lib.NewMetrics(datadogClient, 1)
-
-	// Use middleware
-	http.Handle("/example", MetricsMiddleware(metrics, "example_service")(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Success"))
-	})))
-
-	http.Handle("/example-error", MetricsMiddleware(metrics, "example_service")(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("Error"))
-	})))
-
-	http.ListenAndServe(":8080", nil)
+    // Configure Datadog client
+    config := datadog.DataDogConfig{
+        DD_AGENT_HOST: "localhost",
+        DD_AGENT_PORT: 8125,
+    }
+    datadogClient := datadog.NewDatadogClient(config)
+    metrics := metrics_lib.NewMetrics(datadogClient, 1)
+    
+    // Use middleware
+    http.Handle("/example", MetricsMiddleware(metrics, "example_service")(http.HandlerFunc(func (w http.ResponseWriter, r *http.Request) {
+        w.WriteHeader(http.StatusOK)
+        w.Write([]byte("Success"))
+    })))
+    
+    http.Handle("/example-error", MetricsMiddleware(metrics, "example_service")(http.HandlerFunc(func (w http.ResponseWriter, r *http.Request) {
+        w.WriteHeader(http.StatusInternalServerError)
+        w.Write([]byte("Error"))
+    })))
+    
+    http.ListenAndServe(":8080", nil)
 }
 ```
 
-This middleware automatically tracks the duration of each HTTP request and records metrics for success and error scenarios.
+This middleware automatically tracks the duration of each HTTP request and records metrics for success and error
+scenarios.
 
 ---
 
