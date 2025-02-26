@@ -72,3 +72,7 @@ func (m *Metrics) DatabaseMetric(value float64, labels DatabaseMetricLabels) err
 func (m *Metrics) CallMetric(value float64, labels CallMetricLabels) error {
 	return CallMetric(m.client, value, labels)
 }
+
+func (m *Metrics) EventProcessMetric(value float64, labels EventProcessMetricLabels) error {
+	return EventProcessMetric(m.client, value, labels)
+}
