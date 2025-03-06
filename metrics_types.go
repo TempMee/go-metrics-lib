@@ -10,6 +10,8 @@ type MetricsImpl interface {
 	SummaryMetric(name string, value float64, labels map[string]string) error
 	CountMetric(name string, labels map[string]string) error
 	GaugeMetric(name string, value float64, labels map[string]string) error
+	EventProcessMetric(value float64, labels EventProcessMetricLabels) error
+	EventPublishMetric(labels EventPublishMetricLabels) error
 	StandardMetrics
 }
 
@@ -75,4 +77,8 @@ func (m *Metrics) CallMetric(value float64, labels CallMetricLabels) error {
 
 func (m *Metrics) EventProcessMetric(value float64, labels EventProcessMetricLabels) error {
 	return EventProcessMetric(m.client, value, labels)
+}
+
+func (m *Metrics) EventPublishMetric(labels EventPublishMetricLabels) error {
+	return EventPublishMetric(m.client, labels)
 }
