@@ -2,13 +2,17 @@ package datadog
 
 import (
 	"fmt"
-	"github.com/DataDog/datadog-go/v5/statsd"
 	"log"
+	"sync"
+
+	"github.com/DataDog/datadog-go/v5/statsd"
 )
 
 type DataDogClient struct {
 	Client     *statsd.Client
 	Histograms map[string]*Histogram
+
+	mu sync.Mutex
 }
 
 type DataDogConfig struct {
@@ -28,12 +32,16 @@ func NewDatadogClient(datadogConfig DataDogConfig) *DataDogClient {
 	return &DataDogClient{
 		dogstatsd_client,
 		make(map[string]*Histogram),
+		sync.Mutex{},
 	}
 }
 
 // CreateHistogram creates a new histogram metric
 // If the metric already exists, it will be ignored
 func (d *DataDogClient) CreateHistogram(metric string, buckets []float64, labels map[string]string, rate float64) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
 	if _, ok := d.Histograms[metric]; ok {
 		return
 	}
@@ -45,6 +53,9 @@ func (d *DataDogClient) CreateHistogram(metric string, buckets []float64, labels
 // Histogram pushes a value to a histogram metric
 // If the metric does not exist, it will be created with default buckets (0.0, 1.0)
 func (d *DataDogClient) Histogram(metric string, value float64, labels map[string]string, rate float64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
 	if _, ok := d.Histograms[metric]; !ok {
 		d.CreateHistogram(metric, []float64{0.0, 1.0}, labels, rate)
 	}
