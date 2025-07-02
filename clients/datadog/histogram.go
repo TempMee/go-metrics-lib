@@ -3,6 +3,7 @@ package datadog
 import (
 	"fmt"
 	"strings"
+	"sync"
 )
 
 type Histogram struct {
@@ -10,6 +11,8 @@ type Histogram struct {
 	Buckets    []float64
 	Labels     map[string]string
 	Rate       float64
+
+	mu sync.Mutex
 }
 
 func NewHistogram(metricName string, buckets []float64, labels map[string]string, rate float64) *Histogram {
@@ -18,6 +21,7 @@ func NewHistogram(metricName string, buckets []float64, labels map[string]string
 		Buckets:    buckets,
 		Labels:     labels,
 		Rate:       rate,
+		mu:         sync.Mutex{},
 	}
 }
 
@@ -30,7 +34,10 @@ func trimFloat(s string) string {
 
 // GenerateMetric generates a metric based on the value and labels
 // buckets are filled based on the value such that 5 fills 10, 25 fills 30, 50 fills +Inf
-func (h *Histogram) GenerateMetric(value float64, labels map[string]string, rate float64) (Histogram, error) {
+func (h *Histogram) GenerateMetric(value float64, labels map[string]string, rate float64) (*Histogram, error) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+
 	// set le label related to value in buckets
 	le := ""
 	for _, bucket := range h.Buckets {
@@ -49,6 +56,6 @@ func (h *Histogram) GenerateMetric(value float64, labels map[string]string, rate
 	h.Labels["le"] = le
 	h.Rate = rate
 
-	return *h, nil
+	return h, nil
 
 }
