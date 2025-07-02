@@ -6,7 +6,7 @@ type EventPublishMetricLabels struct {
 	Result  Result
 }
 
-func EventPublishMetric(client Client, labels EventProcessMetricLabels) error {
+func EventPublishMetric(client Client, labels EventPublishMetricLabels) error {
 	err := client.Count("event_publish_count", map[string]string{
 		"service": labels.Service,
 		"queue":   labels.Queue,
