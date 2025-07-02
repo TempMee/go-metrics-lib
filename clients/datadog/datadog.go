@@ -57,7 +57,8 @@ func (d *DataDogClient) Histogram(metric string, value float64, labels map[strin
 	defer d.mu.Unlock()
 
 	if _, ok := d.Histograms[metric]; !ok {
-		d.CreateHistogram(metric, []float64{0.0, 1.0}, labels, rate)
+		histogram := NewHistogram(metric, []float64{0.0, 1.0}, labels, rate)
+		d.Histograms[metric] = histogram
 	}
 
 	histogram, err := d.Histograms[metric].GenerateMetric(value, d.Histograms[metric].Labels, rate)
