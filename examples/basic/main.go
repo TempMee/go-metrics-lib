@@ -1,9 +1,10 @@
 package main
 
 import (
+	"log"
+
 	MetricsLib "github.com/TempMee/go-metrics-lib"
 	"github.com/TempMee/go-metrics-lib/clients/datadog"
-	"log"
 )
 
 type Result string

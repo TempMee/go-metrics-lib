@@ -1,8 +1,9 @@
 package metrics_lib
 
 import (
-	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type MetricsImpl interface {
@@ -47,8 +48,8 @@ func (m *Metrics) ResolverMetric(value float64, labels ResolverMetricLabels) err
 	return ResolverMetric(m.client, value, labels)
 }
 
-func (m *Metrics) HttpMiddlewareMetric(config HttpMiddlewareMetricConfig) func(http.Handler) http.Handler {
-	return HttpMiddlewareMetric(m.client, config, m.rate)
+func (m *Metrics) HttpMiddlewareMetric(serviceName string) gin.HandlerFunc {
+	return httpMetricMiddleware(m.client, serviceName, m.rate)
 }
 
 func (m *Metrics) ApiMetric(value float64, labels ApiMetricLabels) error {

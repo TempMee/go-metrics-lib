@@ -1,39 +1,55 @@
 package metrics_lib
 
 import (
-	"log"
-	"net/http"
+	"fmt"
 	"time"
+
+	"github.com/TempMee/x/logging"
+	"github.com/gin-gonic/gin"
 )
 
-type HttpMiddlewareMetricConfig struct {
-	Service string
-}
-
-func HttpMiddlewareMetric(client Client, config HttpMiddlewareMetricConfig, rate float64) func(http.Handler) http.Handler {
-	return func(h http.Handler) http.Handler {
-		return measurementHandler(client, config, rate, h)
-	}
-}
-
-func measurementHandler(client Client, config HttpMiddlewareMetricConfig, rate float64, next http.Handler) http.Handler {
-
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-
-		startTime := time.Now()
+func httpMetricMiddleware(client Client, serviceName string, rate float64) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		start := time.Now()
 
 		defer func() {
-			elasped := time.Since(startTime).Milliseconds()
-			err := client.Histogram("http_request_duration_histogram_milliseconds", float64(elasped),
+			elapsed := time.Since(start).Milliseconds()
+			result := ResultSuccess
+			if c.Writer.Status() < 200 || c.Writer.Status() >= 300 {
+				result = ResultError
+			}
+
+			if err := client.Histogram(
+				"http_request_duration_histogram_milliseconds", // metric name
+				float64(elapsed), // elapsed time in milliseconds
 				map[string]string{
-					"service": config.Service,
-					"method":  r.Method,
-					"result":  "success",
-				}, rate)
-			if err != nil {
-				log.Fatal(err)
+					"service": serviceName,      // service name
+					"method":  c.Request.Method, // method
+					"path":    c.FullPath(),     // path
+					"result":  result,           // result
+				},
+				rate, // rate
+			); err != nil {
+				logger := logging.FromContext(c)
+				logger.Warn().Err(err).Msg("failed to record http request duration")
+			}
+
+			if err := client.Count(
+				"http_request_count", // metric name
+				map[string]string{
+					"service":     serviceName,                          // service name
+					"method":      c.Request.Method,                     // method
+					"path":        c.FullPath(),                         // path
+					"status_code": fmt.Sprintf("%d", c.Writer.Status()), // status code
+					"result":      result,                               // result
+				},
+				rate, // rate
+			); err != nil {
+				logger := logging.FromContext(c)
+				logger.Warn().Err(err).Msg("failed to record http request count")
 			}
 		}()
-		next.ServeHTTP(w, r)
-	})
+
+		c.Next()
+	}
 }
