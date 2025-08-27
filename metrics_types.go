@@ -1,3 +1,4 @@
+//go:generate mockgen -destination=mocks/metrics_types.go -package=mocks -source=metrics_types.go
 package metrics_lib
 
 import (
