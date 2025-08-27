@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/TempMee/x/logging"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 )
 
 func httpMetricMiddleware(client Client, serviceName string, rate float64) gin.HandlerFunc {
@@ -30,8 +30,7 @@ func httpMetricMiddleware(client Client, serviceName string, rate float64) gin.H
 				},
 				rate, // rate
 			); err != nil {
-				logger := logging.FromContext(c)
-				logger.Warn().Err(err).Msg("failed to record http request duration")
+				zerolog.Ctx(c).Warn().Err(err).Msg("failed to record http request duration")
 			}
 
 			if err := client.Count(
@@ -45,8 +44,7 @@ func httpMetricMiddleware(client Client, serviceName string, rate float64) gin.H
 				},
 				rate, // rate
 			); err != nil {
-				logger := logging.FromContext(c)
-				logger.Warn().Err(err).Msg("failed to record http request count")
+				zerolog.Ctx(c).Warn().Err(err).Msg("failed to record http request count")
 			}
 		}()
 

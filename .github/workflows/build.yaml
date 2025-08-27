@@ -14,19 +14,6 @@ jobs:
     name: go-tests
     runs-on: ubuntu-latest
     steps:
-      - name: generate tempmee-ci access token
-        uses: tibdex/github-app-token@v1.8.0
-        id: generate_ci_token
-        with:
-          app_id: ${{ secrets.TEMPMEE_CI_APP_ID }}
-          private_key: ${{ secrets.TEMPMEE_CI_PRIVATE_KEY }}
-
-      - name: configure git with tempmee-ci access token
-        env:
-          CI_TOKEN: ${{ steps.generate_ci_token.outputs.token }}
-        run: |
-          git config --global url."https://tempmee:${CI_TOKEN}@github.com".insteadOf "https://github.com"
-
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ env.GO_VERSION }}
