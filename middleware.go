@@ -1,7 +1,6 @@
 package metrics_lib
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -31,20 +30,6 @@ func httpMetricMiddleware(client Client, serviceName string, rate float64) gin.H
 				rate, // rate
 			); err != nil {
 				zerolog.Ctx(c).Warn().Err(err).Msg("failed to record http request duration")
-			}
-
-			if err := client.Count(
-				"http_request_count", // metric name
-				map[string]string{
-					"service":     serviceName,                          // service name
-					"method":      c.Request.Method,                     // method
-					"path":        c.FullPath(),                         // path
-					"status_code": fmt.Sprintf("%d", c.Writer.Status()), // status code
-					"result":      result,                               // result
-				},
-				rate, // rate
-			); err != nil {
-				zerolog.Ctx(c).Warn().Err(err).Msg("failed to record http request count")
 			}
 		}()
 
