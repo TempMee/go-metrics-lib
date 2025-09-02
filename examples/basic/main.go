@@ -83,4 +83,8 @@ func main() {
 		Result:  MetricsLib.Success,
 	})
 
+	middleware := metrics.HttpMiddlewareMetric("service")
+	if middleware == nil {
+		panic("middleware is nil")
+	}
 }

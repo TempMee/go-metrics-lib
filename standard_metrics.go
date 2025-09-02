@@ -1,6 +1,7 @@
 package metrics_lib
 
 import (
+	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,7 @@ const (
 
 type StandardMetrics interface {
 	ResolverMetric(value float64, labels ResolverMetricLabels) error
+	PlainHttpMiddlewareMetric(config HttpMiddlewareMetricConfig) func(http.Handler) http.Handler
 	HttpMiddlewareMetric(serviceName string) gin.HandlerFunc
 	ApiMetric(value float64, labels ApiMetricLabels) error
 	ApiMetricDuration(startTime time.Time, labels ApiMetricLabels, err error) error
