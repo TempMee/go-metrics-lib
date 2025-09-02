@@ -43,6 +43,12 @@ func measurementHandler(client Client, config HttpMiddlewareMetricConfig, rate f
 
 func httpMetricMiddleware(client Client, serviceName string, rate float64) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		// allow health endpoint to skip metrics
+		if c.Request.URL.Path == "/health" {
+			c.Next()
+			return
+		}
+
 		start := time.Now()
 
 		defer func() {
