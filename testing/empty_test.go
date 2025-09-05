@@ -25,11 +25,11 @@ func Test_EmptyMetrics(t *testing.T) {
 		Result:   metrics_lib.Success,
 	}))
 
-	assert.Nil(t, metrics.HttpMiddlewareMetric("test"))
-
-	assert.Nil(t, metrics.PlainHttpMiddlewareMetric(metrics_lib.HttpMiddlewareMetricConfig{
+	assert.Nil(t, metrics.HttpMiddlewareMetric(metrics_lib.HttpMiddlewareMetricConfig{
 		Service: "test",
 	}))
+
+	assert.Nil(t, metrics.GinHttpMiddlewareMetric("test"))
 
 	assert.NoError(t, metrics.ApiMetric(100, metrics_lib.ApiMetricLabels{
 		Service: "test",

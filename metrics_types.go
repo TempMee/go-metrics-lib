@@ -50,12 +50,12 @@ func (m *Metrics) ResolverMetric(value float64, labels ResolverMetricLabels) err
 	return ResolverMetric(m.client, value, labels)
 }
 
-func (m *Metrics) PlainHttpMiddlewareMetric(config HttpMiddlewareMetricConfig) func(http.Handler) http.Handler {
+func (m *Metrics) HttpMiddlewareMetric(config HttpMiddlewareMetricConfig) func(http.Handler) http.Handler {
 	return HttpMiddlewareMetric(m.client, config, m.rate)
 }
 
-func (m *Metrics) HttpMiddlewareMetric(serviceName string) gin.HandlerFunc {
-	return httpMetricMiddleware(m.client, serviceName, m.rate)
+func (m *Metrics) GinHttpMiddlewareMetric(serviceName string) gin.HandlerFunc {
+	return ginHttpMetricMiddleware(m.client, serviceName, m.rate)
 }
 
 func (m *Metrics) ApiMetric(value float64, labels ApiMetricLabels) error {

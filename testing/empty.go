@@ -35,11 +35,11 @@ func (m *emptyMetrics) ResolverMetric(value float64, labels metrics_lib.Resolver
 	return nil
 }
 
-func (m *emptyMetrics) HttpMiddlewareMetric(serviceName string) gin.HandlerFunc {
+func (m *emptyMetrics) HttpMiddlewareMetric(config metrics_lib.HttpMiddlewareMetricConfig) func(http.Handler) http.Handler {
 	return nil
 }
 
-func (m *emptyMetrics) PlainHttpMiddlewareMetric(config metrics_lib.HttpMiddlewareMetricConfig) func(http.Handler) http.Handler {
+func (m *emptyMetrics) GinHttpMiddlewareMetric(serviceName string) gin.HandlerFunc {
 	return nil
 }
 
