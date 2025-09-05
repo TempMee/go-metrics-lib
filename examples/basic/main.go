@@ -1,9 +1,10 @@
 package main
 
 import (
+	"log"
+
 	MetricsLib "github.com/TempMee/go-metrics-lib"
 	"github.com/TempMee/go-metrics-lib/clients/datadog"
-	"log"
 )
 
 type Result string
@@ -82,4 +83,8 @@ func main() {
 		Result:  MetricsLib.Success,
 	})
 
+	middleware := metrics.HttpMiddlewareMetric("service")
+	if middleware == nil {
+		panic("middleware is nil")
+	}
 }

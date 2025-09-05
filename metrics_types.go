@@ -1,8 +1,11 @@
+//go:generate mockgen -destination=mocks/metrics_types.go -package=mocks -source=metrics_types.go
 package metrics_lib
 
 import (
 	"net/http"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type MetricsImpl interface {
@@ -49,6 +52,10 @@ func (m *Metrics) ResolverMetric(value float64, labels ResolverMetricLabels) err
 
 func (m *Metrics) HttpMiddlewareMetric(config HttpMiddlewareMetricConfig) func(http.Handler) http.Handler {
 	return HttpMiddlewareMetric(m.client, config, m.rate)
+}
+
+func (m *Metrics) GinHttpMiddlewareMetric(serviceName string) gin.HandlerFunc {
+	return ginHttpMetricMiddleware(m.client, serviceName, m.rate)
 }
 
 func (m *Metrics) ApiMetric(value float64, labels ApiMetricLabels) error {

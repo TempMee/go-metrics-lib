@@ -2,6 +2,11 @@ package metrics_lib
 
 type Result = string
 
+const (
+	ResultSuccess Result = "success"
+	ResultError   Result = "error"
+)
+
 type ResolverMetricLabels struct {
 	Resolver string
 	Service  string
