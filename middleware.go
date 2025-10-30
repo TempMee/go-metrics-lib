@@ -3,6 +3,7 @@ package metrics_lib
 import (
 	"log"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -62,10 +63,11 @@ func ginHttpMetricMiddleware(client Client, serviceName string, rate float64) gi
 				"http_request_duration_histogram_milliseconds", // metric name
 				float64(elapsed), // elapsed time in milliseconds
 				map[string]string{
-					"service": serviceName,      // service name
-					"method":  c.Request.Method, // method
-					"path":    c.FullPath(),     // path
-					"result":  result,           // result
+					"service":     serviceName,      // service name
+					"method":      c.Request.Method, // method
+					"path":        c.FullPath(),     // path
+					"result":      result,           // result
+					"status_code": strconv.Itoa(c.Writer.Status()),
 				},
 				rate, // rate
 			); err != nil {
