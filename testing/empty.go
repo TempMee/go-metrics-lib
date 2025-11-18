@@ -40,7 +40,9 @@ func (m *emptyMetrics) HttpMiddlewareMetric(config metrics_lib.HttpMiddlewareMet
 }
 
 func (m *emptyMetrics) GinHttpMiddlewareMetric(serviceName string) gin.HandlerFunc {
-	return nil
+	return func(ctx *gin.Context) {
+		ctx.Next()
+	}
 }
 
 func (m *emptyMetrics) ApiMetric(value float64, labels metrics_lib.ApiMetricLabels) error {
