@@ -10,10 +10,11 @@
 package mocks
 
 import (
+	http "net/http"
 	reflect "reflect"
 	time "time"
 
-	go_metrics_lib "github.com/TempMee/go-metrics-lib"
+	metrics_lib "github.com/TempMee/go-metrics-lib"
 	gin "github.com/gin-gonic/gin"
 	gomock "go.uber.org/mock/gomock"
 )
@@ -43,7 +44,7 @@ func (m *MockMetricsImpl) EXPECT() *MockMetricsImplMockRecorder {
 }
 
 // ApiMetric mocks base method.
-func (m *MockMetricsImpl) ApiMetric(value float64, labels go_metrics_lib.ApiMetricLabels) error {
+func (m *MockMetricsImpl) ApiMetric(value float64, labels metrics_lib.ApiMetricLabels) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ApiMetric", value, labels)
 	ret0, _ := ret[0].(error)
@@ -57,7 +58,7 @@ func (mr *MockMetricsImplMockRecorder) ApiMetric(value, labels any) *gomock.Call
 }
 
 // ApiMetricDuration mocks base method.
-func (m *MockMetricsImpl) ApiMetricDuration(startTime time.Time, labels go_metrics_lib.ApiMetricLabels, err error) error {
+func (m *MockMetricsImpl) ApiMetricDuration(startTime time.Time, labels metrics_lib.ApiMetricLabels, err error) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ApiMetricDuration", startTime, labels, err)
 	ret0, _ := ret[0].(error)
@@ -71,7 +72,7 @@ func (mr *MockMetricsImplMockRecorder) ApiMetricDuration(startTime, labels, err 
 }
 
 // CallMetric mocks base method.
-func (m *MockMetricsImpl) CallMetric(value float64, labels go_metrics_lib.CallMetricLabels) error {
+func (m *MockMetricsImpl) CallMetric(value float64, labels metrics_lib.CallMetricLabels) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "CallMetric", value, labels)
 	ret0, _ := ret[0].(error)
@@ -99,7 +100,7 @@ func (mr *MockMetricsImplMockRecorder) CountMetric(name, labels any) *gomock.Cal
 }
 
 // DatabaseMetric mocks base method.
-func (m *MockMetricsImpl) DatabaseMetric(value float64, labels go_metrics_lib.DatabaseMetricLabels) error {
+func (m *MockMetricsImpl) DatabaseMetric(value float64, labels metrics_lib.DatabaseMetricLabels) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "DatabaseMetric", value, labels)
 	ret0, _ := ret[0].(error)
@@ -113,7 +114,7 @@ func (mr *MockMetricsImplMockRecorder) DatabaseMetric(value, labels any) *gomock
 }
 
 // EventProcessMetric mocks base method.
-func (m *MockMetricsImpl) EventProcessMetric(value float64, labels go_metrics_lib.EventProcessMetricLabels) error {
+func (m *MockMetricsImpl) EventProcessMetric(value float64, labels metrics_lib.EventProcessMetricLabels) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EventProcessMetric", value, labels)
 	ret0, _ := ret[0].(error)
@@ -127,7 +128,7 @@ func (mr *MockMetricsImplMockRecorder) EventProcessMetric(value, labels any) *go
 }
 
 // EventPublishMetric mocks base method.
-func (m *MockMetricsImpl) EventPublishMetric(labels go_metrics_lib.EventPublishMetricLabels) error {
+func (m *MockMetricsImpl) EventPublishMetric(labels metrics_lib.EventPublishMetricLabels) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "EventPublishMetric", labels)
 	ret0, _ := ret[0].(error)
@@ -154,6 +155,20 @@ func (mr *MockMetricsImplMockRecorder) GaugeMetric(name, value, labels any) *gom
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GaugeMetric", reflect.TypeOf((*MockMetricsImpl)(nil).GaugeMetric), name, value, labels)
 }
 
+// GinHttpMiddlewareMetric mocks base method.
+func (m *MockMetricsImpl) GinHttpMiddlewareMetric(serviceName string) gin.HandlerFunc {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GinHttpMiddlewareMetric", serviceName)
+	ret0, _ := ret[0].(gin.HandlerFunc)
+	return ret0
+}
+
+// GinHttpMiddlewareMetric indicates an expected call of GinHttpMiddlewareMetric.
+func (mr *MockMetricsImplMockRecorder) GinHttpMiddlewareMetric(serviceName any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GinHttpMiddlewareMetric", reflect.TypeOf((*MockMetricsImpl)(nil).GinHttpMiddlewareMetric), serviceName)
+}
+
 // HistogramMetric mocks base method.
 func (m *MockMetricsImpl) HistogramMetric(name string, value float64, labels map[string]string) error {
 	m.ctrl.T.Helper()
@@ -169,21 +184,21 @@ func (mr *MockMetricsImplMockRecorder) HistogramMetric(name, value, labels any) 
 }
 
 // HttpMiddlewareMetric mocks base method.
-func (m *MockMetricsImpl) HttpMiddlewareMetric(serviceName string) gin.HandlerFunc {
+func (m *MockMetricsImpl) HttpMiddlewareMetric(config metrics_lib.HttpMiddlewareMetricConfig) func(http.Handler) http.Handler {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "HttpMiddlewareMetric", serviceName)
-	ret0, _ := ret[0].(gin.HandlerFunc)
+	ret := m.ctrl.Call(m, "HttpMiddlewareMetric", config)
+	ret0, _ := ret[0].(func(http.Handler) http.Handler)
 	return ret0
 }
 
 // HttpMiddlewareMetric indicates an expected call of HttpMiddlewareMetric.
-func (mr *MockMetricsImplMockRecorder) HttpMiddlewareMetric(serviceName any) *gomock.Call {
+func (mr *MockMetricsImplMockRecorder) HttpMiddlewareMetric(config any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HttpMiddlewareMetric", reflect.TypeOf((*MockMetricsImpl)(nil).HttpMiddlewareMetric), serviceName)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "HttpMiddlewareMetric", reflect.TypeOf((*MockMetricsImpl)(nil).HttpMiddlewareMetric), config)
 }
 
 // ResolverMetric mocks base method.
-func (m *MockMetricsImpl) ResolverMetric(value float64, labels go_metrics_lib.ResolverMetricLabels) error {
+func (m *MockMetricsImpl) ResolverMetric(value float64, labels metrics_lib.ResolverMetricLabels) error {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "ResolverMetric", value, labels)
 	ret0, _ := ret[0].(error)
