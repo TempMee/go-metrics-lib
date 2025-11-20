@@ -29,7 +29,7 @@ func Test_EmptyMetrics(t *testing.T) {
 		Service: "test",
 	}))
 
-	assert.Nil(t, metrics.GinHttpMiddlewareMetric("test"))
+	assert.NotNil(t, metrics.GinHttpMiddlewareMetric("test"))
 
 	assert.NoError(t, metrics.ApiMetric(100, metrics_lib.ApiMetricLabels{
 		Service: "test",
