@@ -138,6 +138,24 @@ func (p *PrometheusClient) Count(name string, labels map[string]string, rate flo
 	return nil
 }
 
+func (p *PrometheusClient) CountWithValue(name string, value int64, labels map[string]string, rate float64) error {
+	labelNames := make([]string, 0, len(labels))
+	labelValues := make([]string, 0, len(labels))
+	for k := range labels {
+		labelNames = append(labelNames, k)
+	}
+	if _, ok := p.CounterVecs[name]; !ok {
+		_ = p.CreateCounterVec(name, "", labelNames)
+	}
+
+	for _, labelName := range p.CounterVecs[name].Labels {
+		labelValues = append(labelValues, labels[labelName])
+	}
+
+	p.CounterVecs[name].Metric.WithLabelValues(labelValues...).Add(float64(value))
+	return nil
+}
+
 func (p *PrometheusClient) Gauge(name string, value float64, labels map[string]string, rate float64) error {
 	labelNames := make([]string, 0, len(labels))
 	labelValues := make([]string, 0, len(labels))

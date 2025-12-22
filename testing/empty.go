@@ -23,6 +23,10 @@ func (m *emptyMetrics) CountMetric(name string, labels map[string]string) error 
 	return nil
 }
 
+func (m *emptyMetrics) CountMetricWithValue(name string, value int64, labels map[string]string) error {
+	return nil
+}
+
 func (m *emptyMetrics) GaugeMetric(name string, value float64, labels map[string]string) error {
 	return nil
 }
