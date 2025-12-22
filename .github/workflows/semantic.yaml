@@ -1,0 +1,41 @@
+# this deployment made only for integration with Jira
+# so Jira can calculate lead time of the features
+# actual deployment is done by AWS
+
+name: Semantic Release
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: semantic-release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  semantic-release:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: write
+    steps:
+      - name: Set up Golang
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+        id: go
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: release
+        uses: cycjimmy/semantic-release-action@v3
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          semantic_version: 18
+          extra_plugins: |
+            @semantic-release/git@10.0.1
+            @semantic-release/exec@6.0.2
+            @semantic-release/changelog@6.0.1
