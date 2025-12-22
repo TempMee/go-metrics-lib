@@ -16,6 +16,8 @@ func Test_EmptyMetrics(t *testing.T) {
 
 	assert.NoError(t, metrics.CountMetric("test", map[string]string{"test": "test"}))
 
+	assert.NoError(t, metrics.CountMetricWithValue("test", 5, map[string]string{"test": "test"}))
+
 	assert.NoError(t, metrics.GaugeMetric("test", 100, map[string]string{"test": "test"}))
 
 	assert.NoError(t, metrics.SummaryMetric("test", 100, map[string]string{"test": "test"}))

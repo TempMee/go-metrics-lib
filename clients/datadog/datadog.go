@@ -94,6 +94,15 @@ func (d *DataDogClient) Count(metric string, labels map[string]string, rate floa
 	return nil
 }
 
+func (d *DataDogClient) CountWithValue(metric string, value int64, labels map[string]string, rate float64) error {
+	tags := labelsToStringArray(labels)
+	err := d.Client.Count(metric, value, tags, rate)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (d *DataDogClient) Gauge(metric string, value float64, labels map[string]string, rate float64) error {
 	tags := labelsToStringArray(labels)
 	err := d.Client.Gauge(metric, value, tags, rate)

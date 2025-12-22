@@ -12,6 +12,7 @@ type MetricsImpl interface {
 	HistogramMetric(name string, value float64, labels map[string]string) error
 	SummaryMetric(name string, value float64, labels map[string]string) error
 	CountMetric(name string, labels map[string]string) error
+	CountMetricWithValue(name string, value int64, labels map[string]string) error
 	GaugeMetric(name string, value float64, labels map[string]string) error
 	EventProcessMetric(value float64, labels EventProcessMetricLabels) error
 	EventPublishMetric(labels EventPublishMetricLabels) error
@@ -36,6 +37,10 @@ func (m *Metrics) HistogramMetric(name string, value float64, labels map[string]
 
 func (m *Metrics) CountMetric(name string, labels map[string]string) error {
 	return m.client.Count(name, labels, m.rate)
+}
+
+func (m *Metrics) CountMetricWithValue(name string, value int64, labels map[string]string) error {
+	return m.client.CountWithValue(name, value, labels, m.rate)
 }
 
 func (m *Metrics) GaugeMetric(name string, value float64, labels map[string]string) error {
