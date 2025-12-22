@@ -6,6 +6,20 @@ import (
 	"testing"
 )
 
+func TestDataDogClient_CountWithValue(t *testing.T) {
+	client := NewDatadogClient(DataDogConfig{
+		DD_AGENT_HOST: "localhost",
+		DD_AGENT_PORT: 8125,
+	})
+
+	t.Run("Should count with custom value", func(t *testing.T) {
+		a := assert.New(t)
+
+		err := client.CountWithValue("test_count", 5, map[string]string{"test": "test"}, 1.0)
+		a.NoError(err)
+	})
+}
+
 func TestDataDogClient_CreateHistogram(t *testing.T) {
 	statsdClient, _ := statsd.New("localhost:8125")
 	datadogClient := &DataDogClient{
